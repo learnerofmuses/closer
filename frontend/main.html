@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closer | Main</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+    <style>
+
+        * {
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'DM Sans', sans-serif;
+            background: #f7b6d2; 
+
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+
+            overflow: hidden;
+            position: relative;
+        }
+        nav { 
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100; 
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(244, 246, 249, 0.88);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 3rem;
+        }
+        /* BACKGROUND SYMBOLS */
+
+        .background-symbols {
+            position: fixed;
+            inset: 0; 
+            overflow: hidden;
+            pointer-events: none;
+
+            z-index: 0;
+        }
+
+        .symbol {
+            position: absolute;
+            font-size: 120px; 
+            font-weight: bold;
+            opacity: 1;
+            text-shadow:
+                0 0 5px currentColor, 
+                0 0 10px currentColor,
+                0 0 20px currentColor,
+                0 0 40px currentColor,
+                0 0 80px currentColor; 
+             
+        }
+
+        @keyframes neon-flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                opacity: 1;
+            }
+
+            20%, 24%, 55% {
+                opacity: 0.7;
+            }
+        }
+
+        /* RED X */ 
+        .symbol.x {
+            color: #ff1a1a;
+            animation: neon-flicker 7s infinite;
+            text-shadow:
+                0 0 5px #ffffff, 
+                0 0 10px #ff3333, 
+                0 0 20px #ff1a1a,
+                0 0 40px #ff0000, 
+                0 0 80px #ff0000,
+                0 0 100px #ff0000;
+                
+        }
+
+        /* BLACK O */
+        .symbol.o {
+            color: #151515;
+            animation: neon-flicker 5s infinite;
+            text-shadow:
+                0 0 5px #ffffff, 
+                0 0 10px #777777, 
+                0 0 20px #444444, 
+                0 0 40px #222222, 
+                0 0 80px #111111, 
+                0 0 100px #280137;
+        }
+
+        .symbol:nth-child(1) {
+            top: 5%;
+            left: 5%;
+            transform: rotate(-15deg);
+        }
+
+        .symbol:nth-child(2) {
+            top: 15%;
+            right: 15%;
+            transform: rotate(12deg);
+        }
+
+        .symbol:nth-child(3) {
+            top: 43%;
+            left: 2%;
+            transform: rotate(8deg);
+        }
+
+        .symbol:nth-child(4) {
+            top: 65%;
+            right: 5%;
+            transform: rotate(-12deg);
+        }
+
+        .symbol:nth-child(5) {
+            bottom: 5%;
+            left: 15%;
+            transform: rotate(15deg);
+        }
+
+        .symbol:nth-child(6) {
+            bottom: 5%;
+            right: 30%;
+            transform: rotate(-8deg);
+        }
+
+        .symbol:nth-child(7) {
+            top: 30%;
+            left: 25%;
+            transform: rotate(-10deg);
+        }
+
+        .symbol:nth-child(8) {
+            top: 5%;
+            left: 45%;
+            transform: rotate(10deg);
+        }
+
+        .symbol:nth-child(9) {
+            bottom: 25%;
+            left: 45%;
+            transform: rotate(-15deg);
+        }
+
+        .symbol:nth-child(10) {
+            top: 40%;
+            right: 25%;
+            transform: rotate(12deg);
+        }
+
+        .button {
+            background-color: #ff1a1a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+    </style>
+</head>
+<body>
+
+<nav> 
+    <span class="nav-logo">Closer</span>
+
+</nav>
+
+    <div class="background-symbols">
+        <div class="symbol x">X</div>
+        <div class="symbol o">O</div>
+        <div class="symbol x">X</div>
+        <div class="symbol o">O</div>
+        <div class="symbol x">X</div>
+        <div class="symbol o">O</div>
+        <div class="symbol x">X</div>
+        <div class="symbol o">O</div>
+        <div class="symbol x">X</div>
+        <div class="symbol o">O</div>
+    </div>
+
+
+</body>
+</html>

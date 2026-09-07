@@ -1,0 +1,520 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tic-Tac-Toe | AWS Serverless</title>
+
+    <style>
+
+        /* =========================================
+           GLOBAL STYLES
+           ========================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+
+            background: #f7b6d2;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            overflow: hidden;
+            position: relative;
+        }
+
+
+        /* =========================================
+           BACKGROUND TIC-TAC-TOE SYMBOLS
+           ========================================= */
+
+        .background-symbols {
+            position: fixed;
+            inset: 0;
+
+            overflow: hidden;
+            pointer-events: none;
+
+            z-index: 0;
+        }
+
+        .symbol {
+            position: absolute;
+
+            font-size: 120px;
+            font-weight: bold;
+
+            opacity: 0.12;
+        }
+
+        .symbol.x {
+            color: #d62828;
+        }
+
+        .symbol.o {
+            color: #000000;
+        }
+
+
+        /* Background symbol positions */
+
+        .symbol:nth-child(1) {
+            top: 5%;
+            left: 5%;
+            transform: rotate(-15deg);
+        }
+
+        .symbol:nth-child(2) {
+            top: 15%;
+            right: 10%;
+            transform: rotate(12deg);
+        }
+
+        .symbol:nth-child(3) {
+            top: 45%;
+            left: 2%;
+            transform: rotate(8deg);
+        }
+
+        .symbol:nth-child(4) {
+            top: 65%;
+            right: 5%;
+            transform: rotate(-12deg);
+        }
+
+        .symbol:nth-child(5) {
+            bottom: 5%;
+            left: 15%;
+            transform: rotate(15deg);
+        }
+
+        .symbol:nth-child(6) {
+            bottom: 15%;
+            right: 25%;
+            transform: rotate(-8deg);
+        }
+
+        .symbol:nth-child(7) {
+            top: 30%;
+            left: 25%;
+            transform: rotate(-10deg);
+        }
+
+        .symbol:nth-child(8) {
+            top: 5%;
+            left: 45%;
+            transform: rotate(10deg);
+        }
+
+        .symbol:nth-child(9) {
+            bottom: 25%;
+            left: 45%;
+            transform: rotate(-15deg);
+        }
+
+        .symbol:nth-child(10) {
+            top: 40%;
+            right: 25%;
+            transform: rotate(12deg);
+        }
+
+
+        /* =========================================
+           MAIN GAME CONTAINER
+           ========================================= */
+
+        .game-container {
+            position: relative;
+            z-index: 1;
+
+            width: min(90%, 500px);
+
+            padding: 35px;
+
+            background: rgba(255, 255, 255, 0.94);
+
+            border-radius: 24px;
+
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.18);
+
+            text-align: center;
+        }
+
+
+        /* =========================================
+           HEADER
+           ========================================= */
+
+        .game-header h1 {
+            font-size: 42px;
+            color: #222;
+
+            margin-bottom: 8px;
+        }
+
+        .game-header p {
+            font-size: 15px;
+            color: #777;
+
+            letter-spacing: 1px;
+        }
+
+
+        /* =========================================
+           SCOREBOARD
+           ========================================= */
+
+        .scoreboard {
+            display: flex;
+            justify-content: center;
+            gap: 70px;
+
+            margin: 30px 0 20px;
+        }
+
+        .score {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .player-label {
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .player-x {
+            color: #d62828;
+        }
+
+        .player-o {
+            color: #111;
+        }
+
+        .score-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+
+        /* =========================================
+           GAME STATUS
+           ========================================= */
+
+        .game-status {
+            margin-bottom: 20px;
+
+            font-size: 18px;
+            font-weight: bold;
+
+            color: #444;
+        }
+
+
+        /* =========================================
+           TIC-TAC-TOE BOARD
+           ========================================= */
+
+        .game-board {
+            width: 330px;
+            height: 330px;
+
+            margin: 0 auto;
+
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+
+            background: #222;
+
+            border: 5px solid #222;
+            border-radius: 12px;
+
+            overflow: hidden;
+        }
+
+
+        /* =========================================
+           BOARD CELLS
+           ========================================= */
+
+        .cell {
+            border: 2px solid #222;
+
+            background: #ffffff;
+
+            font-size: 65px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            transition:
+                background-color 0.2s ease,
+                transform 0.15s ease;
+        }
+
+        .cell:hover {
+            background: #f8f8f8;
+
+            transform: scale(0.97);
+        }
+
+
+        /* X and O colors */
+
+        .cell.x {
+            color: #d62828;
+        }
+
+        .cell.o {
+            color: #000000;
+        }
+
+
+        /* =========================================
+           NEW GAME BUTTON
+           ========================================= */
+
+        .game-controls {
+            margin-top: 25px;
+        }
+
+        .new-game-button {
+            padding: 13px 30px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: #222;
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition:
+                background-color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        .new-game-button:hover {
+            background: #d62828;
+
+            transform: translateY(-2px);
+        }
+
+        .new-game-button:active {
+            transform: translateY(0);
+        }
+
+
+        /* =========================================
+           FOOTER
+           ========================================= */
+
+        .game-footer {
+            margin-top: 25px;
+
+            font-size: 12px;
+            color: #999;
+        }
+
+
+        /* =========================================
+           MOBILE RESPONSIVENESS
+           ========================================= */
+
+        @media (max-width: 500px) {
+
+            .game-container {
+                padding: 25px 20px;
+            }
+
+            .game-header h1 {
+                font-size: 34px;
+            }
+
+            .scoreboard {
+                gap: 45px;
+            }
+
+            .game-board {
+                width: 280px;
+                height: 280px;
+            }
+
+            .cell {
+                font-size: 55px;
+            }
+
+            .symbol {
+                font-size: 80px;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <!-- =========================================
+         BACKGROUND
+         ========================================= -->
+
+    <div class="background-symbols">
+
+        <span class="symbol x">X</span>
+        <span class="symbol o">O</span>
+        <span class="symbol x">X</span>
+        <span class="symbol o">O</span>
+        <span class="symbol x">X</span>
+        <span class="symbol o">O</span>
+        <span class="symbol x">X</span>
+        <span class="symbol o">O</span>
+        <span class="symbol x">X</span>
+        <span class="symbol o">O</span>
+
+    </div>
+
+
+    <!-- =========================================
+         MAIN GAME
+         ========================================= -->
+
+    <main class="game-container">
+
+
+        <!-- Header -->
+
+        <header class="game-header">
+
+            <h1>Tic-Tac-Toe</h1>
+
+            <p>AWS Serverless Edition</p>
+
+        </header>
+
+
+        <!-- Scoreboard -->
+
+        <section class="scoreboard">
+
+            <div class="score">
+
+                <span class="player-label player-x">
+                    PLAYER X
+                </span>
+
+                <span class="score-value" id="score-x">
+                    0
+                </span>
+
+            </div>
+
+
+            <div class="score">
+
+                <span class="player-label player-o">
+                    PLAYER O
+                </span>
+
+                <span class="score-value" id="score-o">
+                    0
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- Game Status -->
+
+        <div class="game-status">
+
+            <span id="game-message">
+                Player X's Turn
+            </span>
+
+        </div>
+
+
+        <!-- Tic-Tac-Toe Board -->
+
+        <section class="game-board" id="game-board">
+
+            <button class="cell" data-cell="0"></button>
+
+            <button class="cell" data-cell="1"></button>
+
+            <button class="cell" data-cell="2"></button>
+
+
+            <button class="cell" data-cell="3"></button>
+
+            <button class="cell" data-cell="4"></button>
+
+            <button class="cell" data-cell="5"></button>
+
+
+            <button class="cell" data-cell="6"></button>
+
+            <button class="cell" data-cell="7"></button>
+
+            <button class="cell" data-cell="8"></button>
+
+        </section>
+
+
+        <!-- Controls -->
+
+        <div class="game-controls">
+
+            <button id="new-game" class="new-game-button">
+                New Game
+            </button>
+
+        </div>
+
+
+        <!-- Footer -->
+
+        <footer class="game-footer">
+
+            <p>
+                Powered by AWS & Terraform
+            </p>
+
+        </footer>
+
+    </main>
+
+
+    <!-- JavaScript will be added here later -->
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
+```
